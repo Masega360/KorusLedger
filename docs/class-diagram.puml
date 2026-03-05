@@ -1,0 +1,86 @@
+@startuml KorusCore_Class_Diagram
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "com.korus.core" {
+    
+    ' --- 1. CAPA DE ENTRADA (API) ---
+    package "api" {
+        class TransactionController <<REST>> {
+            - recordUseCase: RecordTransaction
+            + createTransaction(request: TransactionRequest): TransactionResponse
+        }
+        class TransactionRequest <<DTO>> {
+            + title: String
+            + amount: BigDecimal
+            + type: String
+            + category: String
+        }
+        note right of TransactionRequest: DTO: Data Transfer Object.\nEs el JSON crudo que manda el usuario.
+    }
+    
+    ' --- 2. CAPA DE ORQUESTACIÓN (APPLICATION) ---
+    package "application" {
+        class RecordTransaction {
+            - repository: TransactionRepository
+            + execute(title: String, amount: BigDecimal, type: String, category: String): Transaction
+        }
+        interface TransactionRepository <<Port>> {
+            + save(tx: Transaction): Transaction
+            + findAll(): List<Transaction>
+        }
+        note left of TransactionRepository: El "Puerto".\nEl UseCase dice QUÉ necesita guardar,\npero no sabe CÓMO se guarda.
+    }
+    
+    ' --- 3. EL CORAZÓN (DOMAIN) ---
+    package "domain" {
+        enum TransactionType {
+            INCOME
+            EXPENSE
+        }
+        class Transaction <<Entity>> {
+            + id: UUID
+            + title: String
+            + amount: BigDecimal
+            + type: TransactionType
+            + category: String
+            + date: LocalDateTime
+        }
+    }
+    
+    ' --- 4. CAPA DE SALIDA (INFRASTRUCTURE) ---
+    package "infrastructure" {
+        class PostgresTransactionRepository <<Adapter>> {
+            + save(tx: Transaction): Transaction
+            + findAll(): List<Transaction>
+        }
+        class TransactionsTable <<Exposed DB>> {
+            + id: UUIDColumn
+            + title: Column<String>
+            + amount: Column<BigDecimal>
+            + type: Column<String>
+            + category: Column<String>
+            + date: Column<LocalDateTime>
+        }
+        note right of PostgresTransactionRepository: El "Adaptador".\nConoce Exposed y Postgres.\nImplementa la interfaz del Puerto.
+    }
+}
+
+' --- RELACIONES Y DEPENDENCIAS ---
+' API usa Application
+TransactionController ..> RecordTransaction : calls
+TransactionController ..> TransactionRequest : receives
+
+' Application usa Domain
+RecordTransaction ..> Transaction : creates
+RecordTransaction ..> TransactionRepository : uses
+
+' Infra implementa Application y usa Domain
+PostgresTransactionRepository ..|> TransactionRepository : implements
+PostgresTransactionRepository ..> TransactionsTable : queries
+PostgresTransactionRepository ..> Transaction : maps to
+
+' Domain es independiente
+Transaction -> TransactionType
+
+@enduml

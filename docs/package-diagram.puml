@@ -1,0 +1,30 @@
+@startuml Korus_Package_Diagram
+skinparam packageStyle rectangle
+skinparam componentStyle uml2
+
+package "com.korus.core" {
+    
+    package "api" {
+        note "Controllers REST\nAdaptadores de entrada (HTTP)" as N1
+    }
+    
+    package "application" {
+        note "Casos de Uso (Use Cases)\nOrquesta la lógica del negocio" as N2
+    }
+    
+    package "domain" {
+        note "El Corazón\nEntidades y Reglas puras" as N3
+    }
+    
+    package "infrastructure" {
+        note "Adaptadores de salida\nPostgres, RabbitMQ" as N4
+    }
+}
+
+' Regla de Dependencia: Todo apunta hacia adentro (Domain)
+api --> application
+application --> domain
+infrastructure --> domain
+infrastructure --> application
+
+@enduml
