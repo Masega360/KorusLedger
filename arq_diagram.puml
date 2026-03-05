@@ -1,0 +1,57 @@
+@startuml KorusLedger_Architecture
+
+!theme materia-outline
+
+skinparam componentStyle rectangle
+
+
+
+package "Client Layer" {
+
+    [Mobile/Web App] as Client
+
+}
+
+
+
+node "Infrastructure" {
+
+    database "PostgreSQL" as DB
+
+    queue "RabbitMQ" as Broker
+
+    folder "Shared Storage (Volume)" as Storage
+
+}
+
+
+
+package "Backend Services" {
+
+    [KorusCore (Kotlin)] <<Orchestrator>> as Core
+
+    [OCR-Worker (Rust)] <<Processor>> as Worker
+
+}
+
+
+
+Client --> Core : 1. Upload Ticket (REST)
+
+Core --> Storage : 2. Save File
+
+Core --> DB : 3. Create Record (PENDING)
+
+Core --> Broker : 4. Dispatch Job (JSON)
+
+
+
+Broker --> Worker : 5. Pull Task
+
+Worker --> Storage : 6. Read File
+
+Worker --> DB : 7. Update OCR Data (COMPLETED)
+
+
+
+@enduml
