@@ -1,3 +1,5 @@
+package com.korus.core.api
+
 import java.math.BigDecimal
 import com.korus.core.domain.TransactionType
 data class TranscationRequest(
