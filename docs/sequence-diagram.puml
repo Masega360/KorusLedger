@@ -1,0 +1,57 @@
+@startuml KorusCore_Sequence_Diagram
+skinparam maxMessageSize 150
+autonumber
+
+actor "User / Mobile" as Client
+box "API Layer" #LightCyan
+participant "TransactionController" as API
+end box
+
+box "Application Layer" #LightYellow
+participant "RecordTransactionUseCase" as UC
+end box
+
+box "Domain Layer" #LightGreen
+participant "Transaction" as Entity
+end box
+
+box "Infrastructure Layer" #LightPink
+participant "PostgresRepository" as Repo
+database "Postgres DB" as DB
+end box
+
+Client -> API: POST /api/transactions\n(JSON with title, amount, type, category)
+activate API
+
+note right of API: The Controller receives the JSON\nand maps it to the DTO\nTransactionRequest
+
+API -> UC: execute(title, amount, type, category)
+activate UC
+
+note right of UC: The UseCase orchestrates the logic
+
+UC -> Entity **: Create new instance\n(Generates UUID & Date)
+activate Entity
+Entity --> UC : transaction (pure)
+deactivate Entity
+
+UC -> Repo: save(transaction)
+activate Repo
+
+note right of Repo: The Adapter translates Kotlin\nto SQL using Exposed
+
+Repo -> DB: INSERT INTO transactions (...)
+activate DB
+DB --> Repo: 1 row affected
+deactivate DB
+
+Repo --> UC: transaction saved
+deactivate Repo
+
+UC --> API: transaction saved
+deactivate UC
+
+API --> Client: 200 OK\n(JSON with UUID & Date included)
+deactivate API
+
+@enduml

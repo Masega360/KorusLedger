@@ -1,11 +1,22 @@
 package com.korus.core.api
-import TranscationRequest
+import org.springframework.web.bind.annotation.*
+
+
 import com.korus.core.application.RecordTransactionUseCase
-data class TransactionController(
-    val recordUseCase: RecordTransactionUseCase
-)
-{
-    public fun createTransaction(request: TranscationRequest){
-        
+import com.korus.core.domain.Transaction
+
+@RestController
+@RequestMapping("/api/transactions")
+class TransactionController(
+    private val recordTransactionUseCase: RecordTransactionUseCase
+) {
+
+    @PostMapping
+    fun createTransaction(@RequestBody request: TransactionRequest):Transaction {
+        return recordTransactionUseCase.execute(
+        request.title, 
+        request.amount, 
+        request.type, 
+        request.category)
     }
 }
