@@ -3,6 +3,9 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 import com.korus.core.domain.*
+import org.springframework.stereotype.Service
+
+@Service
 class RecordTransactionUseCase(
         private val repository: TransactionRepository
 ){
