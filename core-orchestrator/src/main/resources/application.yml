@@ -3,11 +3,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/korus_db
+    url: jdbc:postgresql://localhost:5432/korus_db?options=-c%20timezone=UTC
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
 
-  # Magia de Exposed: Crea las tablas si no existen
   exposed:
     generate-ddl: true
