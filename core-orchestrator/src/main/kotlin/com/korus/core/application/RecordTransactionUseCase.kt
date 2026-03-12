@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class RecordTransactionUseCase(
         private val repository: TransactionRepository
 ){
-    public fun execute(title: String, amount: BigDecimal, type: TransactionType, category: String): Transaction{
+    public fun execute(title: String, amount: BigDecimal, type: TransactionType, category: TransactionCategory): Transaction{
         val transaction =  Transaction(id = UUID.randomUUID(), title, amount, type, category, date = LocalDateTime.now())
         return repository.save(transaction)
     }

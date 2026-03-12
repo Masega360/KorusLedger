@@ -8,6 +8,6 @@ data class Transaction(
     val title: String,
     val amount: BigDecimal,
     val type: TransactionType,
-    val category: String,
+    val category: TransactionCategory,
     val date: LocalDateTime
 )
