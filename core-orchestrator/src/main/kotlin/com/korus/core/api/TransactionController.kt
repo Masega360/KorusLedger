@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.util.UUID // <-- No te olvides de este import
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -20,26 +21,35 @@ class TransactionController(
 ) {
 
     @PostMapping
-    fun create(@RequestBody request: TransactionRequest): Transaction {
+    fun create(
+        @RequestHeader("X-User-Id") userId: UUID, // El dueño viene del Header
+        @RequestBody request: TransactionRequest  // Los datos de la transacción del JSON
+    ): Transaction {
         return recordUseCase.execute(
-            request.title,
-            request.amount,
-            request.type,
-            request.category
+            title = request.title,
+            amount = request.amount,
+            type = request.type,
+            category = request.category,
+            walletId = request.walletId,
+            userId = userId // Pasamos el userId seguro del header
         )
     }
 
     @GetMapping
     fun getAll(
+        @RequestHeader("X-User-Id") userId: UUID,
         @RequestParam(required = false) type: TransactionType?,
         @RequestParam(required = false) category: TransactionCategory?,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) startDate: LocalDateTime?,
         @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) endDate: LocalDateTime?
     ): List<Transaction> {
-        return getUseCase.execute(type, category, startDate, endDate)
+        return getUseCase.execute(userId, type, category, startDate, endDate)
     }
+
     @GetMapping("/balance")
-    fun getBalance(): Map<String, BigDecimal> {
-        return mapOf("balance" to getBalanceUseCase.execute())
+    fun getBalance(
+        @RequestHeader("X-User-Id") userId: UUID
+    ): Map<String, BigDecimal> {
+        return mapOf("balance" to getBalanceUseCase.execute(userId))
     }
 }
