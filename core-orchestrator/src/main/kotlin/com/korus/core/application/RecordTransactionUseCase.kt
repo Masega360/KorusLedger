@@ -10,7 +10,22 @@ class RecordTransactionUseCase(
         private val repository: TransactionRepository
 ){
     public fun execute(title: String, amount: BigDecimal, type: TransactionType, category: TransactionCategory): Transaction{
-        val transaction =  Transaction(id = UUID.randomUUID(), title, amount, type, category, date = LocalDateTime.now())
+        if (amount <= BigDecimal.ZERO) {
+            throw IllegalArgumentException("Invalid amount")
+        }
+
+        if (title.isBlank()) {
+            throw IllegalArgumentException("Blank title")
+        }
+
+        val transaction =  Transaction(
+            id = UUID.randomUUID(),
+            title = title,
+            amount = amount,
+            type = type,
+            category = category,
+            date = LocalDateTime.now()
+        )
         return repository.save(transaction)
     }
 }
