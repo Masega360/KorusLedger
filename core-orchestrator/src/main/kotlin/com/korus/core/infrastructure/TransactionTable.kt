@@ -11,4 +11,6 @@ object TransactionTable: Table("transactions"){
     val category = varchar("category", 255)
     val date = datetime("date")
     override val primaryKey = PrimaryKey(id, name = "PK_Transaction_ID")
+    val walletId = uuid("wallet_id").references(WalletTable.walletId)
+    val userId = uuid("user_id").references(UserTable.userId)
 }

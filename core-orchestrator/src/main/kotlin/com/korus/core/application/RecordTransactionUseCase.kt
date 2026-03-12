@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class RecordTransactionUseCase(
         private val repository: TransactionRepository
 ){
-    public fun execute(title: String, amount: BigDecimal, type: TransactionType, category: TransactionCategory): Transaction{
+    public fun execute(title: String, amount: BigDecimal, type: TransactionType, category: TransactionCategory, walletId: UUID, userId: UUID): Transaction{
         if (amount <= BigDecimal.ZERO) {
             throw IllegalArgumentException("Invalid amount")
         }
@@ -24,7 +24,9 @@ class RecordTransactionUseCase(
             amount = amount,
             type = type,
             category = category,
-            date = LocalDateTime.now()
+            date = LocalDateTime.now(),
+            walletId = walletId,
+            userId = userId,
         )
         return repository.save(transaction)
     }

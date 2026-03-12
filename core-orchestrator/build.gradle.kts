@@ -35,6 +35,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation(kotlin("stdlib-jdk8"))
+
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 kotlin {

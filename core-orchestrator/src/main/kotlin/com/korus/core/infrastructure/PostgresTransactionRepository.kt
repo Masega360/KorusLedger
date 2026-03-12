@@ -10,7 +10,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.select
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Repository
 class PostgresTransactionRepository : TransactionRepository {
@@ -30,13 +32,14 @@ class PostgresTransactionRepository : TransactionRepository {
     }
 
     override fun findAll(
+        userId: UUID,
         type: TransactionType?,
         category: TransactionCategory?,
         startDate: LocalDateTime?,
         endDate: LocalDateTime?
     ): List<Transaction> {
         return transaction {
-            var query = TransactionTable.selectAll()
+            var query = TransactionTable.select {TransactionTable.userId eq userId }
 
             type?.let { query = query.andWhere { TransactionTable.type eq it.name } }
             category?.let { query = query.andWhere { TransactionTable.category eq it.name } }
@@ -51,7 +54,10 @@ class PostgresTransactionRepository : TransactionRepository {
                         amount = row[TransactionTable.amount],
                         type = TransactionType.valueOf(row[TransactionTable.type]),
                         category = TransactionCategory.valueOf(row[TransactionTable.category]),
-                        date = row[TransactionTable.date]
+                        date = row[TransactionTable.date],
+                        walletId = row[WalletTable.walletId],
+                        userId = row[WalletTable.userId],
+
                     )
                 }
         }

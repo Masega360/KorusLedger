@@ -6,3 +6,6 @@ GET http://localhost:8080/api/transactions?type=EXPENSE&category=FOOD
 
 ### 3. Filtrar por rango de fechas
 GET http://localhost:8080/api/transactions?startDate=2026-03-11T19:48:00&endDate=2026-03-11T23:59:59
+
+### 4. Balance
+GET http://localhost:8080/api/transactions/balance
