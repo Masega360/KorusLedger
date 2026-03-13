@@ -1,0 +1,32 @@
+erDiagram
+    USERS ||--o{ WALLETS : "posee (1:N)"
+    USERS ||--o{ TRANSACTIONS : "registra (1:N)"
+    WALLETS ||--o{ TRANSACTIONS : "contiene (1:N)"
+
+    USERS {
+        UUID id PK
+        VARCHAR(128) name
+        VARCHAR(255) email "UNIQUE INDEX"
+        VARCHAR(255) phone_number
+        VARCHAR(255) password_hash
+        TIMESTAMP created_at
+    }
+
+    WALLETS {
+        UUID id PK
+        UUID user_id FK
+        VARCHAR(255) name
+        DECIMAL(12) balance
+        VARCHAR(50) type "BANK, CASH, DIGITAL, CRYPTO"
+    }
+
+    TRANSACTIONS {
+        UUID id PK
+        UUID wallet_id FK
+        UUID user_id FK
+        VARCHAR(255) title
+        DECIMAL(12) amount
+        VARCHAR(50) type "INCOME, EXPENSE"
+        VARCHAR(255) category "FOOD, TRANSPORT, etc."
+        TIMESTAMP date
+    }

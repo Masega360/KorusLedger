@@ -17,7 +17,7 @@ import java.util.UUID
 @Repository
 
 class PostgresUserRepository: UserRepository {
-    override fun save(user: User) {
+    override fun save(user: User): User {
         transaction {
             UserTable.insert {row ->
                 row[userId] = user.userId
@@ -29,6 +29,7 @@ class PostgresUserRepository: UserRepository {
 
             }
         }
+        return user
     }
 
     override fun findAll(

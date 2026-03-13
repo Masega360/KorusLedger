@@ -1,0 +1,33 @@
+flowchart TD
+subgraph "Client Layer (Frontend)"
+Mobile[📱 Mobile App\nReact Native / Android]
+Web[💻 Web App\nReact / Next.js - Futuro]
+end
+
+subgraph "API Gateway / Auth (Futuro)"
+Gateway[🛡️ API Gateway & JWT Auth]
+end
+
+subgraph "Backend Services (Microservices / Modular Monolith)"
+Core[⚙️ KorusCore Orchestrator\nKotlin + Spring Boot]
+Worker[🤖 OCR-Worker\nRust]
+end
+
+subgraph "Infrastructure Layer"
+DB[(🗄️ PostgreSQL\nkorus_db)]
+Broker[🐰 RabbitMQ\nMessage Queue]
+Storage[📂 Shared Storage\nVolume / S3]
+end
+
+Mobile -->|REST / HTTPS| Gateway
+Web -->|REST / HTTPS| Gateway
+
+Gateway -->|Rutea petición + Inyecta X-User-Id| Core
+
+Core -->|1. CRUD Users, Wallets, Tx| DB
+Core -->|2. Sube Ticket de gasto| Storage
+Core -->|3. Publica evento 'Nuevo Ticket'| Broker
+
+Broker -->|4. Consume evento| Worker
+Worker -->|5. Lee imagen| Storage
+Worker -->|6. Actualiza metadata OCR| DB

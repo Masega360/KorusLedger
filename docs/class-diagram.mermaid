@@ -1,0 +1,86 @@
+classDiagram
+%% --- CAPA API ---
+    namespace API_Layer {
+        class UserController {
+            +register(request: CreateUserRequest): UserResponse
+            +login(request: LoginRequest): TokenResponse
+        }
+        class WalletController {
+            +create(userId: UUID, request: WalletRequest): Wallet
+            +getAll(userId: UUID): List~Wallet~
+        }
+        class TransactionController {
+            +create(userId: UUID, request: TransactionRequest): Transaction
+            +getAll(userId: UUID): List~Transaction~
+            +getBalance(userId: UUID): Map
+        }
+    }
+
+%% --- CAPA APPLICATION ---
+    namespace Application_Layer {
+        class CreateUserUseCase {
+            +execute(request: CreateUserRequest): User
+        }
+        class RecordWalletUseCase {
+            +execute(userId: UUID, name: String, balance: BigDecimal, type: WalletType): Wallet
+        }
+        class RecordTransactionUseCase {
+            +execute(title: String, amount: BigDecimal, ..., walletId: UUID, userId: UUID): Transaction
+        }
+        class GetBalanceUseCase {
+            +execute(userId: UUID): BigDecimal
+        }
+
+        class UserRepository { <<Interface>> }
+        class WalletRepository { <<Interface>> }
+        class TransactionRepository { <<Interface>> }
+    }
+
+%% --- CAPA DOMAIN ---
+    namespace Domain_Layer {
+        class User {
+            +id: UUID
+            +email: String
+            +passwordHash: String
+        }
+        class Wallet {
+            +walletId: UUID
+            +userId: UUID
+            +balance: BigDecimal
+        }
+        class Transaction {
+            +id: UUID
+            +walletId: UUID
+            +userId: UUID
+            +amount: BigDecimal
+        }
+    }
+
+%% --- CAPA INFRASTRUCTURE ---
+    namespace Infrastructure_Layer {
+class PostgresUserRepository { +save(user: User): User }
+class PostgresWalletRepository { +save(wallet: Wallet): Wallet }
+class PostgresTransactionRepository { +save(tx: Transaction): Transaction }
+
+class UserTable { <<Exposed Table>> }
+class WalletTable { <<Exposed Table>> }
+class TransactionTable { <<Exposed Table>> }
+}
+
+%% Conexiones principales
+UserController --> CreateUserUseCase
+WalletController --> RecordWalletUseCase
+TransactionController --> RecordTransactionUseCase
+TransactionController --> GetBalanceUseCase
+
+CreateUserUseCase --> UserRepository
+RecordWalletUseCase --> WalletRepository
+RecordTransactionUseCase --> TransactionRepository
+
+PostgresUserRepository ..|> UserRepository
+PostgresWalletRepository ..|> WalletRepository
+PostgresTransactionRepository ..|> TransactionRepository
+
+PostgresUserRepository --> UserTable
+PostgresWalletRepository --> WalletTable
+PostgresTransactionRepository --> TransactionTable

@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 interface UserRepository {
-    fun save(user: User)
+    fun save(user: User): User
     fun findAll(
         userId: UUID? = null,
         name: String? = null,

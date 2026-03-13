@@ -13,8 +13,10 @@ data class CreateUserRequest(
     @field:Email(message = "Debe ser un formato de correo electrónico válido")
     val email: String,
 
+    val phoneNumber: String,
+
     @field:Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres para ser segura")
     val password: String
 )
 
-data class UserResponse(val id: UUID, val name: String, val email: String, val createdAt: LocalDateTime)
+data class UserResponse(val id: UUID, val name: String, val email: String, val createdAt: LocalDateTime, val phoneNumber: String)

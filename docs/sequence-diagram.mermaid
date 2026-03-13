@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+
+    actor Client as Web / Mobile
+
+%% Al sacar el RGB, el plugin usa su propio color oscuro por defecto
+    box API Controllers
+        participant UCtrl as UserController
+        participant WCtrl as WalletController
+        participant TCtrl as TransactionController
+    end
+
+    box Use Cases
+        participant App as Capa Application
+    end
+
+    box Infra (Postgres)
+        participant DB as Exposed DB
+    end
+
+%% Usamos un rectangulo transparente (0.1 de opacidad) para que no tape el texto
+    rect rgba(255, 255, 255, 0.1)
+        note right of Client: Fase 1: El usuario se registra
+        Client->>UCtrl: POST /api/users/register (JSON)
+        UCtrl->>App: CreateUserUseCase.execute()
+        App->>DB: save(User)
+        DB-->>App: OK (UUID generado)
+        App-->>UCtrl: User
+        UCtrl-->>Client: 200 OK (id, name, email)
+    end
+
+    rect rgba(255, 255, 255, 0.1)
+        note right of Client: Fase 2: Crea su primera billetera (Ej: Banco)
+        Client->>WCtrl: POST /api/wallets (Header: X-User-Id)
+        WCtrl->>App: RecordWalletUseCase.execute()
+        App->>DB: save(Wallet vinculada al User)
+        DB-->>App: OK
+        App-->>WCtrl: Wallet
+        WCtrl-->>Client: 200 OK (walletId devuelto)
+    end
+
+    rect rgba(255, 255, 255, 0.1)
+        note right of Client: Fase 3: Registra el gasto del super
+        Client->>TCtrl: POST /api/transactions (Usa walletId y X-User-Id)
+        TCtrl->>App: RecordTransactionUseCase.execute()
+        App->>DB: save(Transaction con walletId y userId)
+        DB-->>App: OK
+        App-->>TCtrl: Transaction
+        TCtrl-->>Client: 200 OK (Transaccion guardada)
+    end

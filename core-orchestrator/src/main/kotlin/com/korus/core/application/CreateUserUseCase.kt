@@ -17,15 +17,15 @@ class CreateUserUseCase(
             throw IllegalArgumentException("Este email ya está en uso")
         }
 
-        val newUser = User(
+        val user = User(
             userId = UUID.randomUUID(),
             name = request.name,
             email = request.email,
             phoneNumber = request.phoneNumber,
-            passwordHash = passwordEncoder.encode(request.password), // <--- MAGIA REAL: Genera un Hash con BCrypt
+            passwordHash = passwordEncoder.encode(request.password),
             createdAt = LocalDateTime.now()
         )
 
-        return repository.save(newUser)
+        return repository.save(user)
     }
 }
