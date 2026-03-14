@@ -11,17 +11,17 @@ class TransactionTest {
 
     @Test
     fun `should create a valid transaction entity`() {
+        // Arrange & Act
         val transaction = Transaction(
             id = UUID.randomUUID(),
             title = "Compra de teclado",
             amount = BigDecimal("85000.00"),
             type = TransactionType.EXPENSE,
-            category = TransactionCategory.OTHERS,
-            date = LocalDateTime.now(),
-            walletId = UUID.randomUUID(),
-            userId = UUID.randomUUID()
+            category = "Tecnología",
+            date = LocalDateTime.now()
         )
 
+        // Assert
         assertNotNull(transaction.id)
         assertNotNull(transaction.date)
         assertEquals("Compra de teclado", transaction.title)

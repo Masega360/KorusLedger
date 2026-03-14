@@ -1,0 +1,14 @@
+package com.korus.core.api
+
+import com.korus.core.domain.TransactionCategory
+import java.math.BigDecimal
+import com.korus.core.domain.TransactionType
+import java.util.UUID
+
+data class TransactionRequest(
+    val title: String,
+    val amount: BigDecimal,
+    val type: TransactionType,
+    val category: TransactionCategory,
+    val walletId: UUID,
+)
