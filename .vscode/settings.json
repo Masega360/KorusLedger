@@ -1,6 +1,0 @@
-{
-    "java.compile.nullAnalysis.mode": "automatic",
-    "java.import.gradle.projectLocator.includeSubProjects": true,
-    "gradle.nestedProjects": true,
-    "java.import.projectName": "core-orchestrator"
-}
