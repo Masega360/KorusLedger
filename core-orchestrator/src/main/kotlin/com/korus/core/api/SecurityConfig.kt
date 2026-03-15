@@ -27,6 +27,8 @@ class SecurityConfig {
 
                 auth.requestMatchers("/api/transactions/**").permitAll()
 
+                auth.requestMatchers("/api/wallets/**").permitAll()
+
                 auth.anyRequest().authenticated()
             }
         return http.build()
