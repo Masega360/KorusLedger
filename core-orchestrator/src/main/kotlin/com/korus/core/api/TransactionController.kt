@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
 import java.time.LocalDateTime
-import java.util.UUID // <-- No te olvides de este import
+import java.util.UUID 
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -22,8 +22,8 @@ class TransactionController(
 
     @PostMapping
     fun create(
-        @RequestHeader("X-User-Id") userId: UUID, // El dueño viene del Header
-        @RequestBody request: TransactionRequest  // Los datos de la transacción del JSON
+        @RequestHeader("X-User-Id") userId: UUID, 
+        @RequestBody request: TransactionRequest  
     ): Transaction {
         return recordUseCase.execute(
             title = request.title,
@@ -31,7 +31,7 @@ class TransactionController(
             type = request.type,
             category = request.category,
             walletId = request.walletId,
-            userId = userId // Pasamos el userId seguro del header
+            userId = userId 
         )
     }
 

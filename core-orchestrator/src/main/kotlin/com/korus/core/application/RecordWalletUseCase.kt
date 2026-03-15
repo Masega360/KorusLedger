@@ -9,7 +9,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
+import org.springframework.stereotype.Service
 
+@Service
 class RecordWalletUseCase (
     private val repository: WalletRepository
     ){

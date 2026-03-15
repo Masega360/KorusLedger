@@ -26,6 +26,8 @@ class PostgresTransactionRepository : TransactionRepository {
                 row[type] = transaction.type.name
                 row[category] = transaction.category.name
                 row[date] = transaction.date
+                row[walletId] = transaction.walletId  
+                row[userId] = transaction.userId     
             }
         }
         return transaction
@@ -55,8 +57,8 @@ class PostgresTransactionRepository : TransactionRepository {
                         type = TransactionType.valueOf(row[TransactionTable.type]),
                         category = TransactionCategory.valueOf(row[TransactionTable.category]),
                         date = row[TransactionTable.date],
-                        walletId = row[WalletTable.walletId],
-                        userId = row[WalletTable.userId],
+                        walletId = row[TransactionTable.walletId],
+                        userId = row[TransactionTable.userId],
 
                     )
                 }
